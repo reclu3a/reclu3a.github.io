@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POST_TITLE — reclu3a</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      background:#161618;color:#e5e5ea;
+      font-family:'SF Mono',SFMono-Regular,Menlo,Consolas,monospace;
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;display:flex;flex-direction:column;
+    }
+    a{color:#d97757;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .header{padding:48px 0 32px;text-align:center;border-bottom:1px solid #1e1e20}
+    .site-name{font-size:28px;font-weight:700;color:#e5e5ea;letter-spacing:1px}
+    .site-sub{color:#48484a;font-size:13px;margin-top:8px;letter-spacing:2px}
+    .site-sub span{color:#ff453a}
+    .nav{display:flex;justify-content:center;gap:24px;padding:16px 0;border-bottom:1px solid #1e1e20}
+    .nav a{color:#636366;font-size:13px;letter-spacing:1px;transition:color 0.2s}
+    .nav a:hover{color:#d97757;text-decoration:none}
+    .main{max-width:680px;margin:0 auto;padding:40px 24px;flex:1;width:100%}
+
+    .post-header{margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid #1e1e20}
+    .post-title{font-size:22px;font-weight:700;color:#e5e5ea;line-height:1.4}
+    .post-meta{color:#48484a;font-size:12px;margin-top:10px;display:flex;gap:16px;align-items:center}
+    .post-meta .tag{color:#ff453a;background:rgba(255,69,58,0.1);padding:2px 8px;border-radius:3px;font-size:10px}
+    .post-meta .lock{color:#48484a;font-size:10px;background:#1e1e20;padding:2px 8px;border-radius:3px}
+
+    .post-body{color:#98989d;font-size:14px;line-height:1.9;display:none}
+    .post-body h2{color:#e5e5ea;font-size:17px;font-weight:700;margin:28px 0 12px}
+    .post-body p{margin-bottom:16px}
+    .post-body strong{color:#e5e5ea}
+    .post-body code{background:#1e1e20;color:#d97757;padding:2px 6px;border-radius:3px;font-size:13px}
+    .post-body pre{background:#1e1e20;border:1px solid #2c2c2e;border-radius:8px;padding:16px;margin:16px 0;overflow-x:auto;font-size:13px;line-height:1.6;color:#98989d}
+    .post-body pre code{background:none;padding:0;color:inherit}
+
+    .locked{text-align:center;padding:48px 0}
+    .locked-icon{font-size:28px;color:#2c2c2e;margin-bottom:16px}
+    .locked-text{color:#48484a;font-size:13px;margin-bottom:20px}
+    .locked-form{display:flex;justify-content:center;gap:8px}
+    .locked input{
+      background:#1e1e20;border:1px solid #2c2c2e;border-radius:6px;
+      color:#e5e5ea;padding:10px 16px;font-size:13px;width:200px;
+      font-family:inherit;outline:none;text-align:center;
+    }
+    .locked input:focus{border-color:#d97757}
+    .locked button{
+      background:#d97757;color:#161618;border:none;border-radius:6px;
+      padding:10px 20px;font-size:12px;font-weight:600;cursor:pointer;
+      font-family:inherit;
+    }
+    .locked .error{color:#ff453a;font-size:12px;margin-top:12px;display:none}
+
+    .back{margin-top:40px;padding-top:20px;border-top:1px solid #1e1e20}
+    .back a{color:#636366;font-size:13px}
+
+    .footer{text-align:center;padding:32px 24px;border-top:1px solid #1e1e20;color:#2c2c2e;font-size:12px}
+    .footer a{color:#48484a}
+  </style>
+</head>
+<body>
+<header class="header">
+  <a href="/" style="color:#e5e5ea;text-decoration:none"><div class="site-name">reclu3a</div></a>
+  <div class="site-sub"><span>zero day</span> · bug bounty · security research</div>
+</header>
+<nav class="nav">
+  <a href="/">Home</a>
+  <a href="/about/">About</a>
+  <a href="/targets/">Targets</a>
+</nav>
+<main class="main">
+  <div class="post-header">
+    <div class="post-title">POST_TITLE</div>
+    <div class="post-meta">
+      <span>POST_DATE</span>
+      <span class="tag">POST_TAG</span>
+      <span class="lock">encrypted</span>
+    </div>
+  </div>
+
+  <div class="locked" id="locked">
+    <div class="locked-icon">🔒</div>
+    <div class="locked-text">This post is encrypted. Enter password to read.</div>
+    <div class="locked-form">
+      <input type="password" id="pwd" placeholder="password" autofocus>
+      <button onclick="decrypt()">Unlock</button>
+    </div>
+    <div class="error" id="error">Wrong password.</div>
+  </div>
+
+  <div class="post-body" id="content"></div>
+  <div class="back"><a href="/">← back</a></div>
+</main>
+<footer class="footer">
+  <a href="https://github.com/reclu3a">GitHub</a> ·
+  <a href="https://x.com/reclu3a">X</a>
+  <div style="margin-top:8px">© 2025 reclu3a</div>
+</footer>
+
+<!--
+  ENCRYPTED_DATA 是用 encrypt.html 工具生成的密文
+  替换下面 data-encrypted 的值即可
+-->
+<div id="encrypted-data" data-encrypted="ENCRYPTED_CONTENT" style="display:none"></div>
+
+<script>
+async function deriveKey(password,salt){
+  var enc=new TextEncoder();
+  var keyMaterial=await crypto.subtle.importKey('raw',enc.encode(password),{name:'PBKDF2'},false,['deriveBits','deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:100000,hash:'SHA-256'},keyMaterial,{name:'AES-GCM',length:256},true,['decrypt']);
+}
+
+async function decrypt(){
+  var pwd=document.getElementById('pwd').value;
+  if(!pwd)return;
+  var raw=document.getElementById('encrypted-data').getAttribute('data-encrypted');
+  try{
+    var data=Uint8Array.from(atob(raw),function(c){return c.charCodeAt(0)});
+    var salt=data.slice(0,16);
+    var iv=data.slice(16,28);
+    var ciphertext=data.slice(28);
+    var key=await deriveKey(pwd,salt);
+    var decrypted=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,ciphertext);
+    var text=new TextDecoder().decode(decrypted);
+    document.getElementById('content').style.display='block';
+    document.getElementById('content').textContent='';
+    var div=document.createElement('div');
+    div.className='post-body';
+    div.style.display='block';
+    document.getElementById('content').replaceWith(div);
+    div.insertAdjacentHTML('afterbegin',text);
+    document.getElementById('locked').style.display='none';
+  }catch(e){
+    document.getElementById('error').style.display='block';
+  }
+}
+document.getElementById('pwd').addEventListener('keydown',function(e){if(e.key==='Enter')decrypt()});
+</script>
+</body>
+</html>
