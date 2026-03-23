@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing — reclu3a</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      background:#161618;color:#e5e5ea;
+      font-family:'SF Mono',SFMono-Regular,Menlo,Consolas,monospace;
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;display:flex;flex-direction:column;
+    }
+    a{color:#d97757;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .header{padding:48px 0 32px;text-align:center;border-bottom:1px solid #1e1e20}
+    .site-name{font-size:28px;font-weight:700;color:#e5e5ea;letter-spacing:1px}
+    .site-sub{color:#48484a;font-size:13px;margin-top:8px;letter-spacing:2px}
+    .site-sub span{color:#ff453a}
+    .nav{display:flex;justify-content:center;gap:24px;padding:16px 0;border-bottom:1px solid #1e1e20}
+    .nav a{color:#636366;font-size:13px;letter-spacing:1px;transition:color 0.2s}
+    .nav a:hover{color:#d97757;text-decoration:none}
+    .nav a.active{color:#d97757}
+    .main{max-width:680px;margin:0 auto;padding:40px 24px;flex:1;width:100%}
+    .page-title{font-size:20px;font-weight:700;margin-bottom:28px;color:#e5e5ea}
+    .year-group{margin-bottom:32px}
+    .year-label{color:#48484a;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .year-label::after{content:'';flex:1;height:1px;background:#1e1e20}
+    .post-item{display:flex;align-items:baseline;gap:16px;padding:10px 0;border-bottom:1px solid #1e1e20;transition:background 0.2s}
+    .post-item:hover{background:rgba(217,119,87,0.03)}
+    .post-date{color:#48484a;font-size:12px;flex-shrink:0;min-width:90px}
+    .post-tag{font-size:10px;color:#ff453a;background:rgba(255,69,58,0.1);padding:2px 8px;border-radius:3px;flex-shrink:0}
+    .post-title a{color:#e5e5ea;font-size:14px}
+    .post-title a:hover{color:#d97757}
+    .empty{color:#2c2c2e;font-size:13px;padding:24px 0}
+    .footer{text-align:center;padding:32px 24px;border-top:1px solid #1e1e20;color:#2c2c2e;font-size:12px}
+    .footer a{color:#48484a}
+  </style>
+</head>
+<body>
+<header class="header">
+  <a href="/" style="color:#e5e5ea;text-decoration:none"><div class="site-name">reclu3a</div></a>
+  <div class="site-sub"><span>zero day</span> · bug bounty · security research</div>
+</header>
+<nav class="nav">
+  <a href="/">Home</a>
+  <a href="/about/">About</a>
+  <a href="/archives/" class="active">Writing</a>
+</nav>
+<main class="main">
+  <div class="page-title">All Posts</div>
+  <div id="posts"></div>
+</main>
+<footer class="footer">
+  <a href="https://github.com/reclu3a">GitHub</a> ·
+  <a href="https://twitter.com/reclu3a">Twitter</a>
+  <div style="margin-top:8px">© 2025 reclu3a</div>
+</footer>
+<script>
+fetch('/posts.json')
+  .then(function(r){return r.json()})
+  .then(function(posts){
+    var container=document.getElementById('posts');
+    if(!posts.length){
+      var empty=document.createElement('div');
+      empty.className='empty';
+      empty.textContent='No posts yet.';
+      container.appendChild(empty);
+      return;
+    }
+    var grouped={};
+    posts.forEach(function(p){
+      var year=p.date.substring(0,4);
+      if(!grouped[year])grouped[year]=[];
+      grouped[year].push(p);
+    });
+    Object.keys(grouped).sort().reverse().forEach(function(year){
+      var group=document.createElement('div');
+      group.className='year-group';
+      var label=document.createElement('div');
+      label.className='year-label';
+      label.textContent=year;
+      group.appendChild(label);
+      grouped[year].forEach(function(p){
+        var item=document.createElement('div');
+        item.className='post-item';
+        var date=document.createElement('span');
+        date.className='post-date';
+        date.textContent=p.date;
+        var tag=document.createElement('span');
+        tag.className='post-tag';
+        tag.textContent=p.tag;
+        var title=document.createElement('span');
+        title.className='post-title';
+        var link=document.createElement('a');
+        link.href=p.url;
+        link.textContent=p.title;
+        title.appendChild(link);
+        item.appendChild(date);
+        item.appendChild(tag);
+        item.appendChild(title);
+        group.appendChild(item);
+      });
+      container.appendChild(group);
+    });
+  })
+  .catch(function(){
+    var empty=document.createElement('div');
+    empty.className='empty';
+    empty.textContent='No posts yet.';
+    document.getElementById('posts').appendChild(empty);
+  });
+</script>
+</body>
+</html>
