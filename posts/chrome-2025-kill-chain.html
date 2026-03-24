@@ -7,70 +7,45 @@
   <title>Chrome 2025 Kill Chain: ANGLE + V8 + Mojo · reclu3a</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{
-      background:#161618;color:#e5e5ea;
-      font-family:'SF Mono',SFMono-Regular,Menlo,Consolas,monospace;
-      -webkit-font-smoothing:antialiased;
-      min-height:100vh;display:flex;flex-direction:column;
-    }
-    a{color:#d97757;text-decoration:none}
-    a:hover{text-decoration:underline}
+    body{background:#161618;color:#e5e5ea;font-family:'SF Mono',SFMono-Regular,Menlo,Consolas,monospace;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+    a{color:#d97757;text-decoration:none}a:hover{text-decoration:underline}
     .header{padding:48px 0 32px;text-align:center;border-bottom:1px solid #1e1e20}
     .site-name{font-size:28px;font-weight:700;color:#e5e5ea;letter-spacing:1px}
-    .site-sub{color:#48484a;font-size:13px;margin-top:8px;letter-spacing:2px}
-    .site-sub span{color:#ff453a}
+    .site-sub{color:#48484a;font-size:13px;margin-top:8px;letter-spacing:2px}.site-sub span{color:#ff453a}
     .nav{display:flex;justify-content:center;gap:24px;padding:16px 0;border-bottom:1px solid #1e1e20}
-    .nav a{color:#636366;font-size:13px;letter-spacing:1px;transition:color 0.2s}
-    .nav a:hover{color:#d97757;text-decoration:none}
+    .nav a{color:#636366;font-size:13px;letter-spacing:1px;transition:color 0.2s}.nav a:hover{color:#d97757;text-decoration:none}
     .main{max-width:720px;margin:0 auto;padding:40px 24px;flex:1;width:100%}
     .post-header{margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid #1e1e20}
     .post-title{font-size:22px;font-weight:700;color:#e5e5ea;line-height:1.4}
     .post-meta{color:#48484a;font-size:12px;margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
     .tag{color:#ff453a;background:rgba(255,69,58,0.1);padding:2px 8px;border-radius:3px;font-size:10px}
     .tag.blue{color:#64d2ff;background:rgba(100,210,255,0.1)}
-    .tag.purple{color:#bf5af2;background:rgba(191,90,242,0.1)}
     .tag.orange{color:#ff9f0a;background:rgba(255,159,10,0.1)}
     .b{color:#98989d;font-size:14px;line-height:2}
     .b h2{color:#e5e5ea;font-size:17px;font-weight:700;margin:40px 0 16px;padding-top:20px;border-top:1px solid #1e1e20}
     .b h2:first-of-type{border-top:none;padding-top:0}
     .b h3{color:#d97757;font-size:14px;font-weight:700;margin:28px 0 10px}
-    .b p{margin-bottom:16px}
-    .b strong{color:#e5e5ea}
-    .b em{color:#d97757;font-style:normal}
+    .b p{margin-bottom:16px}.b strong{color:#e5e5ea}.b em{color:#d97757;font-style:normal}
     .b code{background:#1e1e20;color:#d97757;padding:2px 6px;border-radius:3px;font-size:12px}
-    .b ul,.b ol{padding-left:20px;margin-bottom:16px}
-    .b li{margin-bottom:8px}
-    .b .note{background:rgba(217,119,87,0.06);border-left:3px solid #d97757;padding:14px 18px;border-radius:0 6px 6px 0;margin:20px 0;font-size:13px;color:#98989d}
-    .b .note strong{color:#d97757}
-    .b .warn{background:rgba(255,69,58,0.06);border-left:3px solid #ff453a;padding:14px 18px;border-radius:0 6px 6px 0;margin:20px 0;font-size:13px;color:#98989d}
-    .b .warn strong{color:#ff453a}
+    .b ul,.b ol{padding-left:20px;margin-bottom:16px}.b li{margin-bottom:8px}
+    .b .note{background:rgba(217,119,87,0.06);border-left:3px solid #d97757;padding:14px 18px;border-radius:0 6px 6px 0;margin:20px 0;font-size:13px;color:#98989d}.b .note strong{color:#d97757}
+    .b .warn{background:rgba(255,69,58,0.06);border-left:3px solid #ff453a;padding:14px 18px;border-radius:0 6px 6px 0;margin:20px 0;font-size:13px;color:#98989d}.b .warn strong{color:#ff453a}
     .b .diagram{background:#0e0e10;border:1px solid #2c2c2e;border-radius:8px;padding:18px;margin:18px 0;overflow-x:auto;font-size:11px;line-height:1.5;color:#636366;white-space:pre;font-family:'SF Mono',Menlo,monospace}
-    .b .diagram .hi{color:#d97757}
-    .b .diagram .red{color:#ff453a}
-    .b .diagram .grn{color:#98c379}
-    .b .diagram .blue{color:#64d2ff}
-    .b .diagram .purple{color:#bf5af2}
+    .b .diagram .hi{color:#d97757}.b .diagram .red{color:#ff453a}.b .diagram .grn{color:#98c379}.b .diagram .blue{color:#64d2ff}.b .diagram .purple{color:#bf5af2}
     .b table{width:100%;border-collapse:collapse;margin:18px 0;font-size:12px}
     .b th{text-align:left;color:#d97757;padding:8px 12px;border-bottom:2px solid #2c2c2e}
     .b td{padding:8px 12px;border-bottom:1px solid #1e1e20;color:#98989d}
-    .term-window{background:#1c1c1e;border-radius:10px;overflow:hidden;margin:20px 0;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
-    .term-bar{background:#2c2c2e;padding:8px 14px;display:flex;align-items:center;gap:7px}
-    .term-dot{width:10px;height:10px;border-radius:50%}
-    .term-dot.r{background:#ff5f56}.term-dot.y{background:#ffbd2e}.term-dot.g{background:#27c93f}
-    .term-bar-title{color:#636366;font-size:11px;margin-left:8px}
-    .term-content{padding:16px 18px;font-size:12px;line-height:1.65;color:#98989d;overflow-x:auto;white-space:pre;font-family:'SF Mono',Menlo,monospace}
-    .term-content .kw{color:#ff453a}
-    .term-content .fn{color:#64d2ff}
-    .term-content .cm{color:#48484a}
-    .term-content .hi{color:#d97757}
-    .term-content .st{color:#98c379}
+    .tw{background:#1c1c1e;border-radius:10px;overflow:hidden;margin:20px 0;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+    .tb{background:#2c2c2e;padding:8px 14px;display:flex;align-items:center;gap:7px}
+    .td{width:10px;height:10px;border-radius:50%}.td.r{background:#ff5f56}.td.y{background:#ffbd2e}.td.g{background:#27c93f}
+    .tbt{color:#636366;font-size:11px;margin-left:8px}
+    .tc{padding:16px 18px;font-size:12px;line-height:1.65;color:#98989d;overflow-x:auto;white-space:pre;font-family:'SF Mono',Menlo,monospace}
+    .tc .kw{color:#ff453a}.tc .fn{color:#64d2ff}.tc .cm{color:#48484a}.tc .hi{color:#d97757}.tc .st{color:#98c379}
     .ref{margin-top:40px;padding-top:24px;border-top:1px solid #1e1e20}
     .ref-title{color:#48484a;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
     .ref a{color:#636366;font-size:12px;display:block;margin-bottom:8px}
-    .back{margin-top:32px;padding-top:20px;border-top:1px solid #1e1e20}
-    .back a{color:#636366;font-size:13px}
-    .footer{text-align:center;padding:32px 24px;border-top:1px solid #1e1e20;color:#2c2c2e;font-size:12px}
-    .footer a{color:#48484a}
+    .back{margin-top:32px;padding-top:20px;border-top:1px solid #1e1e20}.back a{color:#636366;font-size:13px}
+    .footer{text-align:center;padding:32px 24px;border-top:1px solid #1e1e20;color:#2c2c2e;font-size:12px}.footer a{color:#48484a}
   </style>
 </head>
 <body>
@@ -78,11 +53,7 @@
   <a href="/" style="color:#e5e5ea;text-decoration:none"><div class="site-name">reclu3a</div></a>
   <div class="site-sub"><span>zero day</span> · bug bounty · security research</div>
 </header>
-<nav class="nav">
-  <a href="/">Home</a>
-  <a href="/about/">About</a>
-  <a href="/targets/">Targets</a>
-</nav>
+<nav class="nav"><a href="/">Home</a><a href="/about/">About</a><a href="/targets/">Targets</a></nav>
 <main class="main">
   <div class="post-header">
     <div class="post-title">Chrome 2025 Kill Chain: ANGLE + V8 + Mojo — From WebGL to System Compromise</div>
@@ -95,222 +66,221 @@
   </div>
   <div class="b">
 
-    <h2>Overview</h2>
-    <p>In 2025, Chrome exploitation matured beyond single-bug attacks into <strong>multi-stage kill chains</strong> that combine vulnerabilities across different process layers. This article examines a complete exploitation sequence chaining three CVEs across Chrome's graphics, scripting, and IPC subsystems:</p>
+    <h2>The Shift in Browser Exploitation</h2>
+    <p>The landscape of browser exploitation shifted fundamentally in 2025. For years, the narrative was dominated by <strong>Use-After-Free (UAF)</strong> bugs in the DOM. However, with the maturation of Google's <strong>MiraclePtr</strong> (a raw pointer protection mechanism) and the widespread enforcement of the <strong>V8 Sandbox</strong>, the bar for successful exploitation has been raised to an unprecedented level.</p>
+    <p>Attackers — specifically advanced APT groups and commercial surveillance vendors — have adapted. The exploits of 2025 were not simple crashes; they were elegant, multi-stage kill chains. They combined <strong>V8 Type Confusion</strong> to compromise the renderer, leveraged the <strong>ANGLE</strong> graphics layer to gain privileged GPU access, and abused <strong>Mojo IPC</strong> logic to escape the sandbox.</p>
 
     <table>
       <tr><th>Stage</th><th>CVE</th><th>Component</th><th>Primitive</th></tr>
-      <tr><td>1. Initial Access</td><td>CVE-2025-13223</td><td>V8 TurboFan</td><td>Type confusion → arb R/W in renderer</td></tr>
-      <tr><td>2. Privilege Escalation</td><td>CVE-2025-14174</td><td>ANGLE (GPU)</td><td>OOB write → GPU process RCE</td></tr>
-      <tr><td>3. Sandbox Escape</td><td>CVE-2025-2783</td><td>Mojo IPC</td><td>Handle forgery → system access</td></tr>
+      <tr><td>1. Renderer RCE</td><td>CVE-2025-13223</td><td>V8 TurboFan</td><td>Type confusion → arb R/W</td></tr>
+      <tr><td>2. GPU Process RCE</td><td>CVE-2025-14174</td><td>ANGLE Metal backend</td><td>OOB write → vtable hijack</td></tr>
+      <tr><td>3. Sandbox Escape</td><td>CVE-2025-2783</td><td>Mojo FileSystemAccess</td><td>Logic flaw → system access</td></tr>
     </table>
 
-    <div class="note"><strong>Key insight:</strong> Modern Chrome exploitation has entered the "logic era." Mitigations like MiraclePtr and V8 Sandbox have made simple memory corruption insufficient. Attackers now chain logic bugs across graphics, scripting, and IPC layers — each individually insufficient, but devastating when combined.</div>
+    <h2>The New Attack Surface: ANGLE (CVE-2025-14174)</h2>
+    <p><strong>Vulnerability:</strong> Out-of-Bounds Write in Metal Backend<br>
+    <strong>Component:</strong> ANGLE (Almost Native Graphics Layer Engine)<br>
+    <strong>Impact:</strong> GPU Process Code Execution</p>
 
-    <div class="diagram"><span class="red">COMPLETE KILL CHAIN:</span>
+    <p>While V8 gets the headlines, the graphics stack has become the <strong>soft underbelly</strong> of browser security. CVE-2025-14174, disclosed in December 2025, targeted ANGLE — Chrome's abstraction layer that translates WebGL/WebGPU calls into native system APIs (DirectX, OpenGL, Metal, Vulkan).</p>
 
-<span class="blue">┌─────────────────────────────────────────────────────────────────────┐</span>
-<span class="blue">│                         BROWSER PROCESS                            │</span>
-<span class="blue">│               (full system privileges, Mojo hub)                   │</span>
-<span class="blue">└────────────┬──────────────────────────────┬─────────────────────────┘</span>
-             │ <span class="hi">Mojo IPC</span>                      │ <span class="hi">Mojo IPC</span>
-             ▼                              ▼
-<span class="grn">┌────────────────────┐</span>          <span class="purple">┌────────────────────┐</span>
-<span class="grn">│  RENDERER PROCESS  │</span>          <span class="purple">│   GPU PROCESS      │</span>
-<span class="grn">│  (sandboxed)       │</span>          <span class="purple">│   (ANGLE/Metal)    │</span>
-<span class="grn">│  V8, DOM, Layout   │</span>          <span class="purple">│   kernel driver    │</span>
-<span class="grn">│                    │</span>          <span class="purple">│   access           │</span>
-<span class="grn">└────────────────────┘</span>          <span class="purple">└────────────────────┘</span>
+    <h3>The Technical Mechanics</h3>
+    <p>The vulnerability resided specifically in ANGLE's translation of WebGL calls to Apple's <strong>Metal API</strong>. When a web page initiates a <code>texImage2D</code> call, ANGLE must calculate the memory stride and padding to map the texture into the GPU's memory space.</p>
 
-<span class="grn">Stage 1: CVE-2025-13223</span>        <span class="purple">Stage 2: CVE-2025-14174</span>
-V8 type confusion               ANGLE OOB write
-→ arb R/W in renderer           → GPU process RCE
+    <p>In CVE-2025-14174, the calculation for <code>pixelsDepthPitch</code> (used in 3D textures) suffered from an <strong>integer overflow</strong> when specific packing alignment parameters (<code>GL_UNPACK_ALIGNMENT</code>) were combined with extreme texture dimensions.</p>
 
-                    <span class="red">Stage 3: CVE-2025-2783</span>
-                    Mojo IPC handle forgery
-                    → sandbox escape
-                    → <span class="red">SYSTEM COMPROMISE</span></div>
+    <div class="tw">
+      <div class="tb"><div class="td r"></div><div class="td y"></div><div class="td g"></div><span class="tbt">ANGLE Metal backend — pixelsDepthPitch overflow</span></div>
+      <div class="tc"><span class="cm">// Simplified vulnerable calculation in ANGLE's Metal backend:</span>
 
-    <h2>Stage 1: V8 Type Confusion (CVE-2025-13223)</h2>
-    <p>The entry point. A <strong>JIT optimization flaw in TurboFan's redundancy elimination</strong> pass incorrectly removes <code>CheckMaps</code> validation nodes, allowing type confusion between different object memory layouts.</p>
-
-    <h3>Root Cause: Side-Effect Blindness</h3>
-    <p>TurboFan's optimizer assumes that certain operations have no side effects. But <code>.toString()</code> can trigger user-defined callbacks that change object shapes:</p>
-
-    <div class="term-window">
-      <div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div><span class="term-bar-title">exploit_v8.js — type confusion trigger</span></div>
-      <div class="term-content"><span class="kw">function</span> <span class="fn">vulnerable_opt</span>(arr, trigger_obj) {
-    <span class="kw">let</span> x = arr[0];         <span class="cm">// TurboFan assumes arr contains Doubles</span>
-    trigger_obj.toString(); <span class="cm">// <span class="hi">Side-effect changes arr to Object array</span></span>
-    arr[1] = 1.337e-308;   <span class="cm">// Type confusion: float written as pointer</span>
-}
-
-<span class="cm">// After ~10000 calls, TurboFan optimizes and removes CheckMaps</span>
-<span class="cm">// The .toString() side-effect is not tracked by the optimizer</span>
-<span class="cm">// Result: attacker writes a controlled float value as a tagged pointer</span></div>
-    </div>
-
-    <p>The optimizer sees <code>arr</code> as a Double array and generates machine code that writes <code>1.337e-308</code> as a raw 64-bit float. But after the <code>.toString()</code> side-effect, <code>arr</code> is now an Object array — the float bits are reinterpreted as a <strong>heap pointer</strong>, giving the attacker a <em>type confusion primitive</em>.</p>
-
-    <h3>From Type Confusion to Arbitrary R/W</h3>
-    <ul>
-      <li>Corrupt array length field → <strong>out-of-bounds access</strong></li>
-      <li>Read adjacent heap objects → <strong>address leak</strong></li>
-      <li>Overwrite <code>BackingStore</code> pointer → <strong>arbitrary read/write</strong></li>
-    </ul>
-
-    <h3>V8 Sandbox Bypass</h3>
-    <p>V8's memory sandbox (Ubercage) limits the damage of heap corruption. The attacker bypasses it by corrupting a <code>WasmInstanceObject</code>'s jump table, redirecting WASM execution to JIT-compiled shellcode within the sandbox.</p>
-
-    <h2>Stage 2: ANGLE GPU Process RCE (CVE-2025-14174)</h2>
-    <p>With renderer code execution, the attacker escalates to the <strong>GPU process</strong> — which has kernel-level driver interactions unavailable to the sandboxed renderer.</p>
-
-    <h3>The ANGLE Vulnerability</h3>
-    <p>ANGLE (Almost Native Graphics Layer Engine) is Chrome's graphics abstraction that translates WebGL/WebGPU calls to native APIs (Metal on macOS, Vulkan on Linux, Direct3D on Windows).</p>
-
-    <p>CVE-2025-14174 is an <strong>integer overflow in the Metal backend</strong> when processing 3D textures with specific packing alignment parameters. The <code>pixelsDepthPitch</code> calculation overflows, leading to an undersized allocation:</p>
-
-    <div class="term-window">
-      <div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div><span class="term-bar-title">ANGLE Metal backend — integer overflow</span></div>
-      <div class="term-content"><span class="cm">// Simplified vulnerable calculation:</span>
 <span class="fn">pixelsDepthPitch</span> = width * height * bytesPerPixel * alignment;
-<span class="cm">//                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-<span class="cm">//                  <span class="kw">Integer overflow when dimensions are large</span></span>
-<span class="cm">//                  Allocates small buffer, writes large texture data</span>
+<span class="cm">//                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<span class="cm">//                  <span class="kw">Integer overflow when dimensions are extreme</span></span>
+<span class="cm">//                  Result: undersized GPU buffer allocation</span>
+<span class="cm">//                  Texture data writes past buffer boundary</span>
 
 <span class="cm">// Triggered via WebGL:</span>
-gl.<span class="fn">texImage3D</span>(gl.TEXTURE_3D, 0, gl.RGBA8,
-    <span class="hi">width</span>, <span class="hi">height</span>, <span class="hi">depth</span>,  <span class="cm">// attacker-controlled dimensions</span>
+gl.<span class="fn">texImage2D</span>(gl.TEXTURE_2D, 0, gl.RGBA8,
+    <span class="hi">width</span>, <span class="hi">height</span>,    <span class="cm">// attacker-controlled dimensions</span>
     0, gl.RGBA, gl.UNSIGNED_BYTE, <span class="hi">attackerData</span>);</div>
     </div>
 
-    <h3>Exploitation in the GPU Process</h3>
+    <h3>The Exploit Primitive</h3>
     <ol>
-      <li><strong>Heap Feng Shui:</strong> Spray GPU process heap with <code>SharedMemory</code> objects to create predictable layout</li>
-      <li><strong>Trigger:</strong> WebGL <code>texImage3D</code> call initiates the overflow</li>
-      <li><strong>Corruption:</strong> Attacker-controlled texture data overwrites adjacent object's vtable pointer</li>
-      <li><strong>Execution:</strong> Object destruction triggers a function pointer controlled by the attacker</li>
+      <li><strong>Heap Feng Shui:</strong> The attacker sprays the GPU process heap with <code>SharedMemory</code> objects to align memory chunks.</li>
+      <li><strong>Trigger:</strong> A specific WebGL draw call triggers the overflow, writing attacker-controlled texture data past the bounds of the allocated buffer.</li>
+      <li><strong>Corruption:</strong> The overflow overwrites the <code>vtable</code> pointer of a C++ object residing in the adjacent heap chunk.</li>
+      <li><strong>Execution:</strong> When the GPU process attempts to destruct or use that object, it calls a function pointer now controlled by the attacker.</li>
     </ol>
 
-    <div class="note"><strong>Why GPU process matters:</strong> Unlike the renderer, the GPU process has direct kernel driver interactions (IOKit on macOS, DRM on Linux). Compromising it provides capabilities impossible from within the renderer sandbox.</div>
+    <div class="note"><strong>Why the GPU process matters:</strong> Unlike the heavily restricted Renderer process, the GPU process interacts directly with <em>kernel-level drivers</em> and windowing systems. Gaining RCE here often bypasses several layers of OS mitigation.</div>
 
-    <h2>Stage 3: Mojo IPC Sandbox Escape (CVE-2025-2783)</h2>
-    <p>The final stage. With control of the renderer (Stage 1) or GPU process (Stage 2), the attacker forges Mojo IPC messages to escape the browser sandbox entirely.</p>
+    <h2>The Classic Evolved: V8 Type Confusion (CVE-2025-13223)</h2>
+    <p><strong>Vulnerability:</strong> JIT Optimization Flaw<br>
+    <strong>Component:</strong> V8 Engine (TurboFan)<br>
+    <strong>Impact:</strong> Renderer RCE (Inside V8 Sandbox)</p>
 
-    <h3>The Mojo Flaw</h3>
-    <p>The browser process's <code>FileSystemAccess</code> interface only validated that file paths didn't contain traversal sequences (<code>../</code>), but <strong>never verified whether the renderer actually owned the requested file</strong>:</p>
+    <p>Despite the V8 Sandbox attempting to isolate the heap, <strong>V8 Type Confusion</strong> remains the primary method for gaining initial read/write primitives. CVE-2025-13223 highlights a failure in the TurboFan optimization pipeline.</p>
 
-    <div class="term-window">
-      <div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div><span class="term-bar-title">Mojo exploit — forged IPC message</span></div>
-      <div class="term-content"><span class="cm">// Attacker hooks Mojo dispatch tables in renderer memory</span>
-<span class="cm">// Forges OnRequestFileAccess message:</span>
+    <h3>The CheckMaps Failure</h3>
+    <p>TurboFan optimizes JavaScript by making assumptions about object types (Maps). If code accesses an array of integers repeatedly, TurboFan compiles machine code optimized for integers. To ensure safety, it inserts <strong>CheckMaps</strong> nodes.</p>
 
-{
-    message_type: <span class="st">"OnRequestFileAccess"</span>,
-    file_path:    <span class="st">"/Users/victim/Library/Application Support/Google/Chrome/Login Data"</span>,
-    <span class="cm">// ^ Chrome's saved passwords SQLite database</span>
-    access_mode:  <span class="st">"read"</span>,
-    handle:       <span class="hi">forged_handle_with_elevated_privs</span>
-}
+    <p>CVE-2025-13223 was a <strong>Redundancy Elimination</strong> error. The optimizer incorrectly determined that a CheckMaps node was redundant and removed it, even though a side-effect in a previous function call could alter the object's Map.</p>
 
-<span class="cm">// Browser process checks:</span>
-<span class="cm">//   ✓ Path doesn't contain "../"</span>
-<span class="cm">//   <span class="kw">✗ Does NOT verify renderer owns this file</span></span>
-<span class="cm">//   <span class="kw">✗ Does NOT verify handle authenticity</span></span>
-<span class="cm">//</span>
-<span class="cm">// → Browser reads file with its own privileges</span>
-<span class="cm">// → Sends contents back to compromised renderer</span>
-<span class="cm">// → <span class="kw">Attacker has user's saved passwords</span></span></div>
+    <div class="tw">
+      <div class="tb"><div class="td r"></div><div class="td y"></div><div class="td g"></div><span class="tbt">exploit_v8.js — type confusion via redundancy elimination</span></div>
+      <div class="tc"><span class="kw">function</span> <span class="fn">vulnerable_opt</span>(arr, trigger_obj) {
+    <span class="cm">// 1. TurboFan sees arr is an array of Doubles</span>
+    <span class="kw">let</span> x = arr[0];
+
+    <span class="cm">// 2. Side-effect: This function changes 'arr' to an array of Objects.</span>
+    <span class="cm">//    However, TurboFan removed the Map check after this call due to the bug.</span>
+    trigger_obj.<span class="fn">toString</span>();
+
+    <span class="cm">// 3. Type Confusion: TurboFan writes a float, but memory is now Object</span>
+    <span class="cm">//    pointers. We write a controlled float value (0x4141...) which is</span>
+    <span class="cm">//    interpreted as a pointer.</span>
+    arr[1] = <span class="hi">1.337e-308</span>;
+}</div>
     </div>
+
+    <h3>Defeating the V8 Sandbox</h3>
+    <p>In 2025, getting <code>addrOf</code> and <code>fakeObj</code> primitives is no longer enough because of the <strong>V8 Sandbox</strong>. This security mechanism "cages" the V8 heap, meaning an attacker can only corrupt memory <em>inside</em> the sandbox. They cannot overwrite return addresses on the stack or modify partition allocators outside the cage.</p>
+
+    <p>To weaponize CVE-2025-13223, attackers used it to corrupt a <strong>WasmInstanceObject</strong>. By modifying the jump table of a WebAssembly instance (which resides inside the sandbox), they could redirect execution to arbitrary shellcode compiled via JIT, effectively gaining arbitrary code execution <em>within the renderer's constraints</em>.</p>
+
+    <div class="diagram"><span class="grn">V8 Type Confusion</span> → corrupt WasmInstanceObject jump table
+    │
+    ▼
+WASM function call redirected → JIT-compiled shellcode
+    │
+    ▼
+<span class="grn">Renderer process code execution (inside V8 Sandbox)</span></div>
+
+    <h2>The Escape: Mojo IPC Logic Bug (CVE-2025-2783)</h2>
+    <p><strong>Vulnerability:</strong> Inadequate Permission Validation<br>
+    <strong>Component:</strong> Mojo IPC (Inter-Process Communication)<br>
+    <strong>Impact:</strong> Sandbox Escape (Full System Compromise)</p>
+
+    <p>With the renderer compromised, the attacker is still trapped in the sandbox. This is where <strong>Mojo IPC</strong> comes in. CVE-2025-2783 was <em>not</em> a memory corruption bug; it was a <strong>logic flaw</strong> in the implementation of the <code>FileSystemAccess</code> interface.</p>
+
+    <h3>The Interface Definition Language (IDL) Flaw</h3>
+    <p>Chrome defines IPC interfaces using <code>.mojom</code> files. The vulnerability existed in a method meant to grant read access to temporary files. The browser checked if the path was "safe" (no <code>../</code>), but <strong>did not verify if the renderer <em>owned</em> the file_path</strong>:</p>
+
+    <div class="tw">
+      <div class="tb"><div class="td r"></div><div class="td y"></div><div class="td g"></div><span class="tbt">Browser Process — vulnerable FileSystemAccess handler</span></div>
+      <div class="tc"><span class="cm">// Vulnerable Logic in Browser Process</span>
+<span class="kw">void</span> <span class="fn">OnRequestFileAccess</span>(int32 render_frame_id, String file_path) {
+    <span class="cm">// FLAW: The browser checked if the path was "safe" (e.g., no ../)</span>
+    <span class="cm">// BUT it did not verify if the renderer <span class="kw">*owned*</span> the file_path.</span>
+    <span class="cm">// An attacker could request access to profile data or cookies.</span>
+    <span class="fn">GrantAccess</span>(file_path);
+}</div>
+    </div>
+
+    <h3>The Exploit Chain</h3>
+    <ol>
+      <li><strong>Compromise Renderer:</strong> Use CVE-2025-13223 to execute native code.</li>
+      <li><strong>Hook Mojo:</strong> Locate the Mojo dispatch tables in memory.</li>
+      <li><strong>Forge Message:</strong> Construct a raw Mojo message calling <code>OnRequestFileAccess</code> with a path pointing to sensitive user data (e.g., <code>Login Data</code> SQLite DB).</li>
+      <li><strong>Exfiltrate:</strong> Since the browser process executes the file read with high privileges, it returns the file handle to the renderer, bypassing OS file permissions.</li>
+    </ol>
+
+    <div class="note"><strong>The "Logic Era":</strong> This represents the "Logic Era" of browser exploitation — using valid features in invalid ways to cross security boundaries. No memory corruption needed for the sandbox escape itself.</div>
 
     <h2>The Complete Kill Chain</h2>
 
-    <div class="diagram"><span class="red">FULL EXPLOITATION SEQUENCE:</span>
+    <div class="diagram"><span class="red">═══════════════════════════════════════════════════════════════</span>
+<span class="red">               CHROME 2025 FULL KILL CHAIN                     </span>
+<span class="red">═══════════════════════════════════════════════════════════════</span>
 
-<span class="grn">═══ Stage 1: V8 (CVE-2025-13223) ═══</span>
+<span class="grn">STAGE 1: V8 Type Confusion (CVE-2025-13223)</span>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Victim visits malicious page
     │
     ▼
-JavaScript triggers TurboFan optimization
+TurboFan redundancy elimination removes CheckMaps
     │
     ▼
 .toString() side-effect → <span class="hi">type confusion</span>
     │
     ▼
-Float-as-pointer → corrupt array length → <span class="hi">OOB R/W</span>
+Float-as-pointer write → corrupt WasmInstanceObject
     │
     ▼
-Corrupt WasmInstanceObject → <span class="grn">renderer code execution</span>
+<span class="grn">✓ Renderer code execution (inside V8 Sandbox)</span>
 
-<span class="purple">═══ Stage 2: ANGLE (CVE-2025-14174) ═══</span>
-WebGL texImage3D with crafted dimensions
+<span class="purple">STAGE 2: ANGLE OOB Write (CVE-2025-14174)</span>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WebGL texImage2D with crafted dimensions
     │
     ▼
-Integer overflow in pixelsDepthPitch
+pixelsDepthPitch integer overflow (Metal backend)
     │
     ▼
-Heap spray SharedMemory → vtable overwrite → <span class="purple">GPU process RCE</span>
+Heap spray SharedMemory → vtable overwrite
+    │
+    ▼
+<span class="purple">✓ GPU process RCE (kernel driver access)</span>
 
-<span class="red">═══ Stage 3: Mojo (CVE-2025-2783) ═══</span>
-Hook Mojo dispatch tables in memory
+<span class="red">STAGE 3: Mojo IPC Logic Escape (CVE-2025-2783)</span>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Hook Mojo dispatch tables in compromised renderer
     │
     ▼
-Forge OnRequestFileAccess message
+Forge OnRequestFileAccess → target Login Data SQLite
     │
     ▼
-Browser process reads sensitive files with full privileges
+Browser reads file with full privileges → returns handle
+    │
+    ▼
+<span class="red">✓ FULL SYSTEM COMPROMISE</span>
     │
     ▼
 Exfiltrate: passwords, cookies, browsing history
-    │
-    ▼
-Write malicious payload to disk → spawn process
-    │
-    ▼
-<span class="red">████ FULL SYSTEM COMPROMISE ████</span></div>
+Write payloads to disk, spawn processes, persist</div>
 
-    <h2>The "Logic Era" of Browser Exploitation</h2>
-    <p>This kill chain represents a paradigm shift. Chrome's security mitigations have made traditional memory corruption attacks increasingly difficult:</p>
+    <h2>AI-Driven Detection: Automated Exploit Generation</h2>
+    <p>The complexity of these chains — specifically the leap from a V8 heap corruption to a stable primitive, and then to a Mojo logic abuse — is <strong>outpacing human manual analysis</strong>. Fuzzers are good at finding crashes, not logic bugs.</p>
 
-    <table>
-      <tr><th>Mitigation</th><th>What it blocks</th><th>How attackers adapt</th></tr>
-      <tr><td>MiraclePtr</td><td>Use-after-free on raw_ptr</td><td>Target logic bugs instead of memory bugs</td></tr>
-      <tr><td>V8 Sandbox</td><td>Heap corruption → arbitrary R/W</td><td>Chain with WASM jump table corruption</td></tr>
-      <tr><td>Site Isolation</td><td>Cross-origin data access</td><td>Escalate to GPU/browser process</td></tr>
-      <tr><td>CFI/CET</td><td>Control flow hijacking</td><td>Abuse valid code paths with wrong data</td></tr>
-    </table>
+    <p>The original article highlights <strong>Penligent.ai's</strong> approach of shifting the paradigm from "Vulnerability Scanning" to <strong>"Automated Exploit Generation" (AEG)</strong>:</p>
 
-    <p>The result: attackers now <strong>abuse valid features in invalid contexts</strong> rather than corrupting memory. The type confusion in Stage 1 exploits a valid optimization pass. The ANGLE overflow exploits a valid texture upload path. The Mojo escape exploits a valid file access interface. Each component works "correctly" — it's the <em>combination</em> that's deadly.</p>
+    <h3>Heap Layout Synthesis</h3>
+    <p>For vulnerabilities like CVE-2025-14174 (ANGLE), AI agents analyze the heap allocator's behavior to automatically determine the precise sequence of allocations (spraying) needed to place a target object next to the overflow buffer. It solves the "Heap Feng Shui" puzzle <strong>mathematically</strong>.</p>
+
+    <h3>IDL Logic Reasoning</h3>
+    <p>For Mojo exploits (CVE-2025-2783), the system parses the entire Chrome codebase's <code>.mojom</code> definitions. It builds a <strong>dependency graph of IPC calls</strong> and uses Reinforcement Learning (RL) to identify sequences of valid messages that result in privileged state changes.</p>
+
+    <div class="note"><strong>Implication:</strong> By automating the construction of the full kill chain — from primitive to escape — this provides the only reliable way to validate if a patch actually breaks the exploit path or merely fixes the symptom.</div>
 
     <h2>Defensive Recommendations</h2>
-    <ul>
-      <li><strong>Enable <code>Strict-Origin-Isolation</code></strong> to prevent cross-origin data leaks</li>
-      <li><strong>Disable WebGL/WebGPU</strong> in high-security contexts to eliminate the ANGLE attack surface</li>
-      <li><strong>Monitor Mojo IPC traffic</strong> for unusual patterns from renderer processes</li>
-      <li><strong>Keep Chrome updated</strong> — all three CVEs have been patched</li>
-      <li><strong>Use hardware security keys</strong> — even if passwords are exfiltrated, 2FA blocks account takeover</li>
-    </ul>
+    <ol>
+      <li><strong>Strict Site Isolation:</strong> Ensure <code>Strict-Origin-Isolation</code> is enabled to prevent cross-origin data leaks even if the renderer is compromised.</li>
+      <li><strong>Disable WebGL/WebGPU in Critical Zones:</strong> For high-security internal portals, use enterprise policies to disable hardware acceleration, effectively neutralizing the ANGLE attack surface (CVE-2025-14174).</li>
+      <li><strong>IPC Monitoring:</strong> Defensive teams must start monitoring internal IPC traffic. EDRs rarely look at Mojo messages, but that is exactly where the breakout happens.</li>
+    </ol>
 
-    <div class="warn"><strong>Disclaimer:</strong> This analysis is based on publicly available research from Penligent AI, Kaspersky Lab, Google TAG, and the Chromium project. Code snippets are illustrative. All vulnerabilities discussed have been patched.</div>
+    <p>The battle has moved from the stack and heap to the <strong>logic gates of the browser's architecture</strong>. Security engineers must adapt their tooling and mindset accordingly.</p>
+
+    <div class="warn"><strong>Disclaimer:</strong> This analysis is based on the publicly available research from Penligent AI (December 2025). Code snippets are illustrative and based on the original article's descriptions. All vulnerabilities discussed have been patched by Google.</div>
 
     <div class="ref">
       <div class="ref-title">References</div>
       <a href="https://www.penligent.ai/hackinglabs/chrome-2025-zero-days-the-angle-v8-and-mojo-kill-chain/">[1] Chrome 2025 Zero-Days: The ANGLE, V8, and Mojo Kill Chain — Penligent AI</a>
-      <a href="https://www.kaspersky.com/blog/forum-troll-apt-with-zero-day-vulnerability/53215">[2] Operation ForumTroll — Kaspersky Lab</a>
-      <a href="https://chromereleases.googleblog.com/">[3] Chrome Releases Blog — Google Security</a>
-      <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-13223">[4] NVD — CVE-2025-13223</a>
-      <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-14174">[5] NVD — CVE-2025-14174</a>
-      <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-2783">[6] NVD — CVE-2025-2783</a>
-      <a href="https://chromium.googlesource.com/angle/angle/">[7] ANGLE Source — Chromium</a>
-      <a href="https://chromium.googlesource.com/v8/v8/">[8] V8 Source — Chromium</a>
+      <a href="https://googleprojectzero.blogspot.com/">[2] Google Project Zero: The State of Browser Exploitation 2025</a>
+      <a href="https://chromium.googlesource.com/chromium/src/+/master/docs/security/mojo.md">[3] Chromium Source: Mojo IPC Security Documentation</a>
+      <a href="https://security.apple.com/blog/">[4] Apple Security Engineering and Architecture (SEAR) Blog</a>
+      <a href="https://docs.google.com/document/d/1FM4fSbSf2bcXLMA85BJyDkUgqI1rPCY1p8Y_g46d6H0/edit">[5] V8 Sandbox High-Level Design Doc — Google</a>
+      <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-13223">[6] NVD — CVE-2025-13223</a>
+      <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-14174">[7] NVD — CVE-2025-14174</a>
+      <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-2783">[8] NVD — CVE-2025-2783</a>
     </div>
 
   </div>
   <div class="back"><a href="/">← back</a></div>
 </main>
 <footer class="footer">
-  <a href="https://github.com/reclu3a">GitHub</a> ·
-  <a href="https://x.com/reclu3a">X</a>
+  <a href="https://github.com/reclu3a">GitHub</a> · <a href="https://x.com/reclu3a">X</a>
   <div style="margin-top:8px">© 2025 reclu3a</div>
 </footer>
 </body>
