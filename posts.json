@@ -1,5 +1,4 @@
 [
-  {"date":"2026-03-24","tag":"kill chain","title":"Chrome 2025 Kill Chain: ANGLE + V8 + Mojo — From WebGL to System Compromise","url":"/posts/chrome-2025-kill-chain.html"},
   {"date":"2026-03-23","tag":"TCC bypass","title":"CVE-2025-31199 — Sploitlight: macOS TCC Bypass via Spotlight Importers","url":"/posts/cve-2025-31199.html"},
   {"date":"2026-03-23","tag":"V8 zero-day","title":"CVE-2025-10585 — V8 Type Confusion via ARM64 Integer Multiplication","url":"/posts/cve-2025-10585.html"},
   {"date":"2026-03-23","tag":"sandbox escape","title":"CVE-2025-2783 — Chrome Sandbox Escape via Mojo IPC Handle Validation","url":"/posts/cve-2025-2783.html"}
