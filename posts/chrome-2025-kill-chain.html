@@ -240,18 +240,20 @@ Browser reads file with full privileges → returns handle
 Exfiltrate: passwords, cookies, browsing history
 Write payloads to disk, spawn processes, persist</div>
 
-    <h2>AI-Driven Detection: Automated Exploit Generation</h2>
-    <p>The complexity of these chains — specifically the leap from a V8 heap corruption to a stable primitive, and then to a Mojo logic abuse — is <strong>outpacing human manual analysis</strong>. Fuzzers are good at finding crashes, not logic bugs.</p>
+    <h2>Why Multi-Stage Chains Are the New Normal</h2>
+    <p>This kill chain illustrates why single-bug exploitation is effectively dead in modern Chrome. Each mitigation forces attackers to add another stage:</p>
 
-    <p>The original article highlights <strong>Penligent.ai's</strong> approach of shifting the paradigm from "Vulnerability Scanning" to <strong>"Automated Exploit Generation" (AEG)</strong>:</p>
+    <table>
+      <tr><th>Mitigation</th><th>What it blocks</th><th>Attacker adaptation</th></tr>
+      <tr><td>MiraclePtr</td><td>UAF on raw_ptr types</td><td>Shift to logic bugs / type confusion</td></tr>
+      <tr><td>V8 Sandbox</td><td>Heap corruption → full arb R/W</td><td>Chain with WASM jump table corruption</td></tr>
+      <tr><td>Site Isolation</td><td>Cross-origin data access</td><td>Escalate to GPU or browser process</td></tr>
+      <tr><td>CFI / CET</td><td>Control flow hijacking</td><td>Abuse valid code paths with wrong data</td></tr>
+    </table>
 
-    <h3>Heap Layout Synthesis</h3>
-    <p>For vulnerabilities like CVE-2025-14174 (ANGLE), AI agents analyze the heap allocator's behavior to automatically determine the precise sequence of allocations (spraying) needed to place a target object next to the overflow buffer. It solves the "Heap Feng Shui" puzzle <strong>mathematically</strong>.</p>
+    <p>The result: attackers now <strong>abuse valid features in invalid contexts</strong> rather than corrupting memory directly. The type confusion in Stage 1 exploits a valid optimization pass. The ANGLE overflow exploits a valid texture upload path. The Mojo escape exploits a valid file access interface. Each component works "correctly" — it's the <em>combination</em> that's deadly.</p>
 
-    <h3>IDL Logic Reasoning</h3>
-    <p>For Mojo exploits (CVE-2025-2783), the system parses the entire Chrome codebase's <code>.mojom</code> definitions. It builds a <strong>dependency graph of IPC calls</strong> and uses Reinforcement Learning (RL) to identify sequences of valid messages that result in privileged state changes.</p>
-
-    <div class="note"><strong>Implication:</strong> By automating the construction of the full kill chain — from primitive to escape — this provides the only reliable way to validate if a patch actually breaks the exploit path or merely fixes the symptom.</div>
+    <div class="note"><strong>For vulnerability researchers:</strong> Auditing individual components in isolation is no longer sufficient. The real attack surface lives at the <em>boundaries</em> between subsystems — where assumptions made by one component are violated by another.</div>
 
     <h2>Defensive Recommendations</h2>
     <ol>
