@@ -1,3 +1,4 @@
 [
-  {"date":"2025-10-04","tag":"V8 zero-day","title":"CVE-2025-10585 — V8 Type Confusion via ARM64 Integer Multiplication","url":"/posts/cve-2025-10585.html"}
+  {"date":"2025-10-04","tag":"V8 zero-day","title":"CVE-2025-10585 — V8 Type Confusion via ARM64 Integer Multiplication","url":"/posts/cve-2025-10585.html"},
+  {"date":"2025-04-28","tag":"sandbox escape","title":"CVE-2025-2783 — Chrome Sandbox Escape via Mojo IPC Handle Validation","url":"/posts/cve-2025-2783.html"}
 ]
